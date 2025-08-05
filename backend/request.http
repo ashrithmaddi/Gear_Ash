@@ -1,0 +1,158 @@
+### 1️ Authentication Routes
+# Register a new user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "firstName": "instructor",
+    "lastName":"1",
+    "email": "instructor1@gmail.com",
+    "password": "123",
+    "role": "instructor"
+}
+
+### Login user
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "instructor1@gmail.com",
+    "password": "123"
+}
+
+### 2 Category Routes
+# Get all categories
+GET http://localhost:5000/api/categories/all
+
+# Create a new category
+###
+POST http://localhost:5000/api/categories/add
+Content-Type: application/json
+
+{
+    "name": "Web Development"
+}
+
+### 3️ Course Routes
+# Get all courses
+GET http://localhost:5000/api/courses/all
+
+# Create a new course
+###
+POST http://localhost:5000/api/courses/add
+Content-Type: application/json
+
+{
+    "title": "React for Beginners",
+    "category": "Web Development",
+    "instructor": "67c3f0c5453015cf1eabc2de",
+    "sections": [],
+    "enrolledStudents": [],
+    "status": "Free",
+    "actions": ["View Course", "Edit Course"]
+}
+
+### 4️ Enrollment Routes
+# Get all enrollments (Admin only)
+GET http://localhost:5000/api/enrollments
+Authorization: Bearer <your_token_here>
+
+# Enroll a student in a course
+POST http://localhost:5000/api/enrollments
+Content-Type: application/json
+Authorization: Bearer <your_token_here>
+
+{
+    "student": "65ab1234dfg7890123456789",
+    "course": "65cd5678abc123456789abcd"
+}
+
+
+
+### 5️ Lesson & Section Routes
+###
+POST http://localhost:5000/api/section
+Content-Type:application/json
+
+{
+    "course":"67c3fde8c8c043e6c11a5248",
+    "title":"Introduction",
+    "lessons":[]
+}
+
+# Get all lessons in a course
+GET http://localhost:5000/api/lessons?courseId=65cd5678abc123456789abcd
+
+# Create a new lesson
+###
+POST http://localhost:5000/api/lesson
+Content-Type: application/json
+
+{
+    "section":"67c42146728c1d8e22112129",
+    "title": "Introduction to React",
+    "content": "Welcome to React!",
+    "lessontype":"video"
+    
+}
+
+### 6️ Quiz Routes
+# Get all quizzes in a course
+GET http://localhost:5000/api/quizzes?courseId=65cd5678abc123456789abcd
+
+# Create a new quiz
+###
+POST http://localhost:5000/api/quizzes
+Content-Type: application/json
+
+{
+    "title": "React Basics",
+    "lessonId": "67c42198728c1d8e2211212c",
+    "questions": [
+        {
+            "question": "What is React?",
+            "options": ["Library", "Framework", "Language"],
+            "answer": "Library"
+        }
+    ]
+}
+
+### 7️ Report Routes
+# Get admin revenue report
+GET http://localhost:5000/api/reports/revenue
+Authorization: Bearer <your_token_here>
+
+# Get enrollment statistics
+GET http://localhost:5000/api/reports/enrollment-stats
+Authorization: Bearer <your_token_here>
+
+# Get active users
+GET http://localhost:5000/api/reports/active-users
+Authorization: Bearer <your_token_here>
+
+### 8️ Settings Routes
+# Get system settings
+GET http://localhost:5000/api/settings
+
+# Update website settings
+PUT http://localhost:5000/api/settings
+Content-Type: application/json
+
+{
+    "websiteName": "GearUp Learning",
+    "theme": "dark"
+}
+
+### 9️ Message Routes
+# Send a message
+POST http://localhost:5000/api/messages
+Content-Type: application/json
+
+{
+    "sender": "65ab1234dfg7890123456789",
+    "receiver": "65cd5678abc123456789abcd",
+    "message": "Hello, I need help with React course."
+}
+
+# Get all messages for a user
+GET http://localhost:5000/api/messages?userId=65ab1234dfg7890123456789

@@ -1,0 +1,38 @@
+.settings-container {
+    padding: 20px;
+    margin: 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tabs .btn {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+  
+  .settings-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .settings-content h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .settings-content .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .settings-content .form-control {
+   
+    max-width: 10 rem;
+  }
+  
+  .settings-content .btn {
+    font-size: 14px;
+  }

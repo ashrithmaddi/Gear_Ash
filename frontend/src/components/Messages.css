@@ -1,0 +1,67 @@
+.tabs .btn {
+    font-size: 14px;
+    padding: 8px 16px;
+    margin: 10px;
+  }
+  
+  .badge-count {
+    background-color: #1a73e8;
+    color: white;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 5px;
+  }
+  
+  .badge-count.dark {
+    background-color: #444;
+  }
+  
+  .email-list {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+  
+  .email-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.2s;
+  }
+  
+  .email-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+  }
+  
+  .star {
+    color: #f8f830;
+    cursor: pointer;
+  }
+  
+  .star-outline {
+    color: #aaa;
+    cursor: pointer;
+  }
+  
+  .email-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .compose-email .form-control:focus {
+    box-shadow: none;
+    border-color: #1a73e8;
+  }
+  
+  .message-area {
+    min-height: 200px;
+  }
+  
+  .btn-send {
+    background-color: #1a73e8;
+    color: white;
+  }
+  .messages-container{
+    margin-left: 100px;
+  }

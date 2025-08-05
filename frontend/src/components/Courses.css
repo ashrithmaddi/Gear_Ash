@@ -1,0 +1,119 @@
+/* Container */
+.courses-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    margin-left: 80px;
+  }
+  
+  /* Search Bar */
+  .search-bar h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Course Header */
+  .course-header h4 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #343a40;
+  }
+  
+  .course-header .btn {
+    font-size: 14px;
+    margin: 10PX;
+  }
+  
+  /* Course Categories */
+  .course-categories h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+
+  }
+  
+  .course-categories .btn {
+    font-size: 14px;
+    margin: 10px;
+  }
+  
+  /* Course Cards */
+  .course-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .course-card img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .course-card .card-body {
+    padding: 16px;
+  }
+  
+  .course-card .badge {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  
+  .course-card .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .course-card .card-text {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 15px;
+  }
+  
+  .course-card .list-unstyled li {
+    font-size: 14px;
+    color: #343a40;
+    margin-bottom: 5px;
+  }
+  
+  .course-card .price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  /* Add New Course Form */
+.add-course-form {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-course-form h5 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .add-course-form .form-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #343a40;
+  }
+  
+  .add-course-form .form-control,
+  .add-course-form .form-select {
+    font-size: 14px;
+  }
+  
+  .add-course-form .btn {
+    font-size: 14px;
+  }

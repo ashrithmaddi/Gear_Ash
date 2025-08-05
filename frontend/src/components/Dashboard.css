@@ -1,0 +1,119 @@
+/* Dashboard Section */
+.dashboard {
+    padding: 10px;
+    margin-left: 50px;
+    background-color: #f8f9fa;
+}
+
+.dashboard h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 20px;
+}
+
+/* Stats Cards */
+.stat-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .card-body {
+    display: flex;
+    align-items: center;
+}
+
+.stat-card i {
+    font-size: 36px;
+    color: #007bff;
+    margin-right: 16px;
+}
+
+.stat-card h6 {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.stat-card h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #343a40;
+}
+
+.stat-card small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+/* Charts Section */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.card-body canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Button group for attendance summary */
+.btn-group .btn {
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Status indicators for fee collection */
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-dot.collected {
+    background-color: #4CAF50;
+}
+
+.status-dot.pending {
+    background-color: #F44336;
+}

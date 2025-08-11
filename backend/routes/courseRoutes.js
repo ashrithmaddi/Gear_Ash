@@ -109,45 +109,38 @@ router.put('/update-quiz/:courseId/:sectionId/:quizId', async (req, res) => {
   }
 });
 
-// Search courses - NEW API ENDPOINT
-router.get('/search', async (req, res) => {
+router.get("/search", async (req, res) => {
   try {
     const { query } = req.query;
-    
-    if (!query || query.trim() === '') {
+
+    if (!query || query.trim() === "") {
       return res.status(400).json({ message: "Search query is required" });
     }
 
-    // Create search criteria - search in title, subtitle, description, etc.
-    const searchRegex = new RegExp(query, 'i'); // case-insensitive search
-    
+    const searchRegex = new RegExp(query, "i");
+
     const courses = await Course.find({
-      $and: [
-        { enabled: true }, // Only show enabled courses
-        {
-          $or: [
-            { title: searchRegex },
-            { subtitle: searchRegex },
-            { description: searchRegex },
-            { level: searchRegex },
-            { 'creator.name': searchRegex }
-          ]
-        }
-      ]
-    }).populate('creator', 'name email');
+      enabled: true,
+      $or: [
+        { title: searchRegex },
+        { description: searchRegex },
+        { level: searchRegex },
+        { category: searchRegex }
+        // You can add more fields here if needed
+      ],
+    });
 
     res.json({
       success: true,
-      courses: courses,
-      count: courses.length
+      courses,
+      count: courses.length,
     });
-    
   } catch (error) {
-    console.error('Search error:', error);
-    res.status(500).json({ 
-      success: false, 
+    console.error("Search error:", error);
+    res.status(500).json({
+      success: false,
       message: "Failed to search courses",
-      error: error.message 
+      error: error.message,
     });
   }
 });

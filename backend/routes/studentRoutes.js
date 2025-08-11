@@ -24,7 +24,22 @@ router.get("/courses/enabled", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.put("/profile/:id", async (req, res) => {
+  try {
+    const updateFields = {};
+    if (req.body.firstName) updateFields.firstName = req.body.firstName;
+    if (req.body.lastName) updateFields.lastName = req.body.lastName;
+    // If you want to allow email change, add: if (req.body.email) updateFields.email = req.body.email;
 
+    const student = await Student.findByIdAndUpdate(req.params.id, updateFields, {
+      new: true,
+    });
+    if (!student) return res.status(404).json({ message: "Student not found" });
+    res.json(student);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
 // Get student details with enrollments and academic records
 router.get("/:id", async (req, res) => {
@@ -48,19 +63,6 @@ router.get("/:id", async (req, res) => {
 });
 
 
-router.get("/:id/profile", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json({
-      fullName: `${user.firstName} ${user.lastName}`,
-      email: user.email,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 
 // Create new student

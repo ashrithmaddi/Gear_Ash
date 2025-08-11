@@ -40,64 +40,67 @@ import { userAdminContextObj } from "./context/UserAdmin";
 
 function App() {
   const { currentUser, setCurrentUser } = useContext(userAdminContextObj);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setCurrentUser(JSON.parse(localStorage.getItem("currentUser")));
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    setCurrentUser(user);
+    setLoading(false);
   }, []);
+
+  if (loading) return null;
 
   return (
     <Router>
       {currentUser ? (
         <div className="app">
           {currentUser.role === "admin" && <Sidebar />}
-          {currentUser.role === "student" && <StudentNavbar />}
-          <div className="main-content">
-            {currentUser.role === "admin" && <Navbar />}
-            <Routes>
-              {/* Admin routes */}
-              {currentUser.role === "admin" && (
-                <>
-                  <Route path="/dash" element={<Dashboard />} />
-                  <Route path="/students" element={<ErrorBoundary><Students /></ErrorBoundary>} />
-                  <Route path="/faculty" element={<Faculty />} />
-                  <Route path="/courses" element={<ErrorBoundary><Courses /></ErrorBoundary>} />
-                  <Route path="/courses/:courseId" element={<ErrorBoundary><CourseDetails /></ErrorBoundary>} />
-                  <Route path="/courses/:courseId/sections/:sectionId" element={<ErrorBoundary><SectionDetails /></ErrorBoundary>} />
-                  <Route path="/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<ErrorBoundary><LessonDetails /></ErrorBoundary>} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/settings" element={<Settings />} />
-                  {/* Remove forced redirect from /courses to /dash */}
-                  <Route path="/" element={<Navigate to="/dash" replace />} />
-                  <Route path="*" element={<Navigate to="/dash" replace />} />
-                </>
+              {currentUser.role === "student" && <StudentNavbar />}
+
+              {currentUser.role === "admin" ? (
+                <div className="main-content">
+                  <Navbar />
+                  <Routes>
+                    <Route path="/dash" element={<Dashboard />} />
+                    <Route path="/students" element={<ErrorBoundary><Students /></ErrorBoundary>} />
+                    <Route path="/faculty" element={<Faculty />} />
+                    <Route path="/courses" element={<ErrorBoundary><Courses /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId" element={<ErrorBoundary><CourseDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId" element={<ErrorBoundary><SectionDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<ErrorBoundary><LessonDetails /></ErrorBoundary>} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/" element={<Navigate to="/dash" replace />} />
+                    <Route path="*" element={<Navigate to="/dash" replace />} />
+                  </Routes>
+                  <Footer />
+                </div>
+              ) : (
+                <div className="student-main-content d-flex flex-column min-vh-100">
+                  <Routes>
+                    <Route path="/studash" element={<HeroSection />} />
+                    <Route path="/my-learning" element={<MyLearning />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/course/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+                    <Route path="/courses" element={<Scourses />} />
+                    <Route path="/course-detail/:courseId" element={<ProtectedRoute><ScourseDetail /></ProtectedRoute>} />
+                    <Route
+                      path="/course-progress/:courseId"
+                      element={
+                        <ProtectedRoute>
+                          <PurchaseCourseProtectedRoute>
+                            <ScourseProgress />
+                          </PurchaseCourseProtectedRoute>
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/" element={<Navigate to="/studash" replace />} />
+                    <Route path="*" element={<Navigate to="/studash" replace />} />
+                  </Routes>
+                  <Footer />
+                </div>
               )}
-              {/* Student routes */}
-              {currentUser.role === "student" && (
-                <>
-                  <Route path="/studash" element={<HeroSection />} />
-                  <Route path="/my-learning" element={<MyLearning />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/course/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
-                  <Route path="/courses" element={<Scourses />} />
-                  <Route path="/course-detail/:courseId" element={<ProtectedRoute><ScourseDetail /></ProtectedRoute>} />
-                  <Route
-                    path="/course-progress/:courseId"
-                    element={
-                      <ProtectedRoute>
-                        <PurchaseCourseProtectedRoute>
-                          <ScourseProgress />
-                        </PurchaseCourseProtectedRoute>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/" element={<Navigate to="/studash" replace />} />
-                  <Route path="*" element={<Navigate to="/studash" replace />} />
-                </>
-              )}
-            </Routes>
-            <Footer />
-          </div>
         </div>
       ) : (
         <Routes>

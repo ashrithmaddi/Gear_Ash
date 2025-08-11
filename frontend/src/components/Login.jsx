@@ -11,24 +11,22 @@ function Login({setShowLogin}) {
   let {currentUser,setCurrentUser}=useContext(userAdminContextObj)
   const navigate=useNavigate()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password,role:type });
-      setCurrentUser(res.data.user)
-      localStorage.setItem("currentUser",JSON.stringify(res.data.user))
-     if (res.data.user.role === "admin") {
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  try {
+    const res = await axios.post("http://localhost:5000/api/auth/login", { email, password, role: type });
+    localStorage.setItem("currentUser", JSON.stringify(res.data));
+    setCurrentUser(res.data);
+    if (res.data.role === "admin") {
       navigate("/dash");
     } else {
       navigate("/studash");
     }
   } catch (err) {
-    setError(
-      err.response?.data?.error 
-    );
+    setError(err.response?.data?.error);
   }
- };
+};
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100" style={{ background: "linear-gradient(to bottom, #1a237e, #0d47a1)" ,minHeight:"100vh"}}>

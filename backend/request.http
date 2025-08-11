@@ -1,16 +1,16 @@
-### 1️ Authentication Routes
-# Register a new user
-POST http://localhost:5000/api/auth/register
+### Get student profile
+GET http://localhost:5173/api/student/6880b4e1652efeb1445b30c1/profile
+Authorization: Bearer your_token_here
+
+### Update student profile
+PUT http://localhost:5173/api/student/6880b4e1652efeb1445b30c1
 Content-Type: application/json
+Authorization: Bearer your_token_here
 
 {
-    "firstName": "instructor",
-    "lastName":"1",
-    "email": "instructor1@gmail.com",
-    "password": "123",
-    "role": "instructor"
+  "firstName": "Reddypally",
+  "lastName": "Reddy"
 }
-
 ### Login user
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json

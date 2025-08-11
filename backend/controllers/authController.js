@@ -46,10 +46,10 @@ const lecturerRegister = async (req, res) => {
 // Unified login for User and Lecturer
 const login = async (req, res) => {
   try {
-    const { email, password, type } = req.body;
+    const { email, password, role } = req.body;
     let user, modelType;
 
-    if (type === "lecturer") {
+    if (role === "lecturer") {
       user = await Lecturer.findOne({ email });
       modelType = "lecturer";
     } else {
@@ -67,7 +67,12 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token, user, type: modelType });
+    // Return both user and token in a single object
+    res.json({
+      ...user.toObject(),
+      token,
+      type: modelType
+    });
   } catch (error) {
     res.status(500).json({ error: "Login failed" });
   }

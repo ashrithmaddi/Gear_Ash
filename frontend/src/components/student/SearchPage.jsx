@@ -55,6 +55,7 @@ const SearchPage = () => {
   return (
     <div className="container my-5">
       <h2 className="mb-4">Search Courses</h2>
+
       <form onSubmit={handleSearch} className="mb-4 d-flex">
         <input
           type="text"

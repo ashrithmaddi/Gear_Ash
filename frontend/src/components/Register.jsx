@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import config from "../config/config";
 
 function Register({ onSuccess }) {
   const [form, setForm] = useState({
@@ -23,7 +24,7 @@ function Register({ onSuccess }) {
     setError("");
     setSuccess("");
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post(config.getFullApiUrl("auth/register"), form);
       setSuccess("Registration successful! Please login.");
       setTimeout(() => {
         if (onSuccess) onSuccess();

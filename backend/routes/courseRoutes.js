@@ -34,6 +34,14 @@ const upload = multer({ storage });
 router.post('/add', upload.single('image'), addCourse);
 router.get('/all', getCourses);
 router.get('/statistics', getStatistics);
+router.get('/every', async (req, res) => {
+  try {
+    const courses = await Course.find({});
+    res.json(courses);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch courses" });
+  }
+});
 router.get('/:id', getCourseById);
 router.put('/update/:id', updateCourse);
 router.delete('/delete/:id', deleteCourse);
@@ -142,25 +150,6 @@ router.get("/search", async (req, res) => {
       message: "Failed to search courses",
       error: error.message,
     });
-  }
-});
-
-router.get("/every", async (req, res) => {
-  try {
-    const courses = await Course.find({});
-    res.json(courses);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch courses" });
-  }
-});
-
-router.get("/:id", async (req, res) => {
-  try {
-    const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).json({ message: "Course not found" });
-    res.json(course);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
 });
 

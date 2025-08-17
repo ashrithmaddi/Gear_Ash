@@ -29,8 +29,10 @@ const ScourseProgress = () => {
     );
   }
 
-  const section = course.sections[selectedSection];
-  const lesson = section?.lessons?.[selectedLesson];
+  const hasSections = Array.isArray(course.sections) && course.sections.length > 0;
+  const section = hasSections ? course.sections[selectedSection] : null;
+  const hasLessons = section && Array.isArray(section.lessons) && section.lessons.length > 0;
+  const lesson = hasLessons ? section.lessons[selectedLesson] : null;
   // If lesson.videoUrl is a YouTube watch URL, convert it to embed format
 const getEmbedUrl = (url) => {
   // Desktop YouTube
@@ -51,8 +53,8 @@ const getEmbedUrl = (url) => {
   return url;
 };
   // Calculate progress
-  const totalLessons = course.sections.reduce((acc, sec) => acc + (sec.lessons?.length || 0), 0);
-  const currentLessonIndex = course.sections.slice(0, selectedSection).reduce((acc, sec) => acc + (sec.lessons?.length || 0), 0) + selectedLesson + 1;
+  const totalLessons = hasSections ? course.sections.reduce((acc, sec) => acc + (sec.lessons?.length || 0), 0) : 0;
+  const currentLessonIndex = hasSections ? course.sections.slice(0, selectedSection).reduce((acc, sec) => acc + (sec.lessons?.length || 0), 0) + selectedLesson + 1 : 0;
   const progressPercentage = totalLessons > 0 ? (currentLessonIndex / totalLessons) * 100 : 0;
 
   // Detect file type for rendering
@@ -267,7 +269,8 @@ if (lesson.videoUrl) {
               </div>
 
               <div className="accordion accordion-flush" id="progressAccordion" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-                {course.sections.map((sec, secIdx) => (
+                {course.sections && Array.isArray(course.sections) && course.sections.length > 0 ? (
+                  course.sections.map((sec, secIdx) => (
                   <div className="accordion-item border-0" key={sec._id || secIdx}>
                     <h2 className="accordion-header" id={`progressHeading${secIdx}`}>
                       <button
@@ -306,7 +309,8 @@ if (lesson.videoUrl) {
                     >
                       <div className="accordion-body p-0">
                         <div className="list-group list-group-flush">
-                          {sec.lessons?.map((les, lesIdx) => (
+                          {sec.lessons && Array.isArray(sec.lessons) && sec.lessons.length > 0 ? (
+                            sec.lessons.map((les, lesIdx) => (
                             <button
                               key={les._id || lesIdx}
                               className={`list-group-item list-group-item-action border-0 py-3 ${
@@ -358,12 +362,26 @@ if (lesson.videoUrl) {
                                 </div>
                               </div>
                             </button>
-                          ))}
+                          ))
+                          ) : (
+                            <div className="p-3 text-center text-muted">
+                              <i className="fas fa-info-circle me-2"></i>
+                              No lessons available in this section.
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                ))
+                ) : (
+                  <div className="p-4 text-center">
+                    <div className="text-muted">
+                      <i className="fas fa-info-circle me-2"></i>
+                      No course content available yet.
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

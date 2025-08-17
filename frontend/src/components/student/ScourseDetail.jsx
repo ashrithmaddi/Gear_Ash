@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { createCoursePlaceholder } from "../../utils/placeholderUtils";
+import config from "../../config/config";
 
 const ScourseDetail = () => {
   const { courseId } = useParams();
@@ -27,7 +29,7 @@ const ScourseDetail = () => {
 
   const fetchCourseDetails = async () => {
     try {
-      const res = await fetch(`/api/courses/${courseId}`);
+      const res = await fetch(config.getFullApiUrl(`courses/${courseId}`));
       if (res.ok) {
         const data = await res.json();
         setCourse(data);
@@ -48,7 +50,7 @@ const ScourseDetail = () => {
 
     try {
       const res = await fetch(
-        `/api/enrollments/is-enrolled?student=${user._id}&course=${courseId}`
+        config.getFullApiUrl(`enrollments/is-enrolled?student=${user._id}&course=${courseId}`)
       );
       
       if (res.ok) {
@@ -66,6 +68,9 @@ const ScourseDetail = () => {
   const handleEnrollment = async () => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     const token = user?.token;
+
+    console.log("User data:", user);
+    console.log("Token:", token);
 
     if (!user || !token) {
       alert("Please log in to enroll in this course.");
@@ -87,7 +92,12 @@ const ScourseDetail = () => {
     setEnrolling(true);
 
     try {
-      const res = await fetch("/api/enrollments", {
+      console.log("Sending enrollment request with:", {
+        student: user._id,
+        course: courseId
+      });
+
+      const res = await fetch(config.getFullApiUrl("enrollments"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,6 +110,7 @@ const ScourseDetail = () => {
       });
 
       const data = await res.json();
+      console.log("Enrollment response:", res.status, data);
 
       if (res.ok) {
         // Successful enrollment
@@ -113,8 +124,14 @@ const ScourseDetail = () => {
         setIsEnrolled(true);
         alert("You are already enrolled in this course!");
         navigate(`/course-progress/${courseId}`);
+      } else if (res.status === 401) {
+        // Token issues
+        alert("Your session has expired. Please log in again.");
+        localStorage.removeItem("currentUser");
+        navigate("/");
       } else {
         // Other errors
+        console.error("Enrollment failed:", data);
         alert(data.error || data.message || "Failed to enroll in the course.");
       }
     } catch (error) {
@@ -207,7 +224,7 @@ const ScourseDetail = () => {
       {/* Course Image */}
       <div className="position-relative mb-5">
         <img
-          src={course.image || "https://via.placeholder.com/800x400?text=No+Image"}
+          src={course.image || createCoursePlaceholder(800, 400)}
           alt={course.title}
           className="img-fluid rounded-4 shadow-lg w-100"
           style={{ maxHeight: "400px", objectFit: "cover" }}
@@ -310,7 +327,7 @@ const ScourseDetail = () => {
           <div className="card-body p-4 text-white">
             <div className="text-center mb-4">
               <div className="display-4 fw-bold mb-2">
-                {course.status === "Paid" ? `₹${course.price || "Price not set"}` : "Free"}
+                {course.status === "Paid" ? `₹${course.amount || "Price not set"}` : "Free"}
               </div>
               {course.status === "Paid" && (
                 <small className="text-white-50">One-time payment</small>
@@ -351,7 +368,7 @@ const ScourseDetail = () => {
             </div>
 
             {isEnrolled && (
-              <div className="bg-white bg-opacity-20 rounded-3 p-3 text-center">
+              <div className="bg-white text-dark bg-opacity-20 rounded-3 p-3 text-center">
                 <i className="fas fa-check-circle me-2"></i>
                 <small>You're enrolled in this course!</small>
               </div>

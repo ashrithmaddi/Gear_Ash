@@ -23,6 +23,22 @@ exports.enrollStudent = async (req, res) => {
         await newEnrollment.save();
         res.status(201).json({ message: "Student enrolled successfully" });
     } catch (error) {
+        console.error("Enrollment error:", error);
         res.status(500).json({ error: "Enrollment failed" });
+    }
+};
+
+exports.checkEnrollmentStatus = async (req, res) => {
+    try {
+        const { student, course } = req.query;
+        if (!student || !course) {
+            return res.json({ isEnrolled: false });
+        }
+        
+        const enrollment = await Enrollment.findOne({ student, course });
+        res.json({ isEnrolled: !!enrollment });
+    } catch (error) {
+        console.error("Error checking enrollment:", error);
+        res.status(500).json({ error: "Failed to check enrollment status" });
     }
 };

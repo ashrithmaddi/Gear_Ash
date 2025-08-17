@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { createCoursePlaceholder } from "../../utils/placeholderUtils";
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
@@ -101,7 +102,7 @@ const SearchPage = () => {
               >
                 <div className="card h-100 shadow-sm">
                   <img
-                    src={course.image || course.courseThumbnail || "https://via.placeholder.com/300x200?text=No+Image"}
+                    src={course.image || course.courseThumbnail || createCoursePlaceholder(300, 200)}
                     alt={course.title || course.courseTitle}
                     className="card-img-top"
                     style={{ height: "200px", objectFit: "cover" }}
@@ -117,7 +118,7 @@ const SearchPage = () => {
                           {course.level || course.courseLevel || "Beginner"}
                         </span>
                         <span className="fw-bold text-primary">
-                          ₹{course.price || course.coursePrice || "Free"}
+                          ₹{course.amount || "Free"}
                         </span>
                       </div>
                       {course.creator && (

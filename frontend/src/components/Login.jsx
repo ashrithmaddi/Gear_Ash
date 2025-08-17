@@ -2,6 +2,7 @@ import React, { useState,useContext} from "react";
 import axios from "axios";
 import { userAdminContextObj } from "../context/UserAdmin";
 import { useNavigate } from "react-router-dom";
+import config from "../config/config";
 
 function Login({setShowLogin}) {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ function Login({setShowLogin}) {
   e.preventDefault();
   setError("");
   try {
-    const res = await axios.post("http://localhost:5000/api/auth/login", { email, password, role: type });
+    const res = await axios.post(config.getFullApiUrl("auth/login"), { email, password, role: type });
     localStorage.setItem("currentUser", JSON.stringify(res.data));
     setCurrentUser(res.data);
     if (res.data.role === "admin") {

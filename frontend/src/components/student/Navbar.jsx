@@ -1,8 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ProfilePicture from "../ProfilePicture";
 
 const StudentNavbar = () => {
   const navigate = useNavigate();
+  
+  // Get user info from localStorage
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -98,9 +102,11 @@ const StudentNavbar = () => {
             <div className="navbar-actions">
               <div className="user-info">
                 <div className="user-avatar">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                  </svg>
+                  <ProfilePicture 
+                    src={currentUser?.profilePicture} 
+                    alt={currentUser?.name} 
+                    size="32"
+                  />
                 </div>
               </div>
               

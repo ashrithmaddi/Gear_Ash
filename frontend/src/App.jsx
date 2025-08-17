@@ -29,6 +29,11 @@ import Scourses from "./components/student/Scourses";
 import StudentNavbar from "./components/student/Navbar";
 import SectionDetails from "./components/SectionDetails";
 import LessonDetails from "./components/LessonDetails";
+import QuizDetails from "./components/QuizDetails";
+import EditCourse from "./components/EditCourse";
+import EditSection from "./components/EditSection";
+import EditLesson from "./components/EditLesson";
+import EditQuiz from "./components/EditQuiz";
 
 // Styles
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -66,8 +71,13 @@ function App() {
                     <Route path="/faculty" element={<Faculty />} />
                     <Route path="/courses" element={<ErrorBoundary><Courses /></ErrorBoundary>} />
                     <Route path="/courses/:courseId" element={<ErrorBoundary><CourseDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/edit" element={<ErrorBoundary><EditCourse /></ErrorBoundary>} />
                     <Route path="/courses/:courseId/sections/:sectionId" element={<ErrorBoundary><SectionDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId/edit" element={<ErrorBoundary><EditSection /></ErrorBoundary>} />
                     <Route path="/courses/:courseId/sections/:sectionId/lessons/:lessonId" element={<ErrorBoundary><LessonDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId/lessons/:lessonId/edit" element={<ErrorBoundary><EditLesson /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId/quizzes/:quizId" element={<ErrorBoundary><QuizDetails /></ErrorBoundary>} />
+                    <Route path="/courses/:courseId/sections/:sectionId/quizzes/:quizId/edit" element={<ErrorBoundary><EditQuiz /></ErrorBoundary>} />
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/settings" element={<Settings />} />

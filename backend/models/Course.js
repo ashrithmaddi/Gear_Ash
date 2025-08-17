@@ -28,6 +28,7 @@ const LessonSchema = new mongoose.Schema({
 
 const SectionSchema = new mongoose.Schema({
     title: { type: String, required: true },
+    description: { type: String },
     lessons: [LessonSchema],
     quizzes: [QuizSchema],
     enabled: { type: Boolean, default: true }

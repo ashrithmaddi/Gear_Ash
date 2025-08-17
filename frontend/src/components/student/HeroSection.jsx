@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { userAdminContextObj } from "../../context/UserAdmin";
 import HeroImage from "../../assests/564.jpg";
+import { createCoursePlaceholder } from "../../utils/placeholderUtils";
 
 const HeroSection = () => {
   const { currentUser } = useContext(userAdminContextObj);
@@ -186,7 +187,7 @@ const HeroSection = () => {
                     >
                       <div className="course-image-container">
                         <img
-                          src={course.image || course.courseThumbnail || "https://via.placeholder.com/300x180?text=No+Image"}
+                          src={course.image || course.courseThumbnail || createCoursePlaceholder(300, 180)}
                           alt={course.title || course.courseTitle}
                           className="course-image"
                         />

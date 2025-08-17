@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Courses.css";
+import ImageUpload from "./ImageUpload";
+import { createCoursePlaceholder } from "../utils/placeholderUtils";
+import config from "../config/config";
 
-const API_BASE_URL ="http://localhost:5000";
+const API_BASE_URL = config.apiBaseUrl;
 
 function Courses() {
 
@@ -114,7 +117,7 @@ function Courses() {
       });
       setCourses([...courses, res.data]);
       setShowAddModal(false);
-      setAddForm({ title: "", category: "", description: "", level: "", status: "Free", estimatedDuration: "", prerequisites: "", price: "", enabled: true });
+      setAddForm({ title: "", category: "", description: "", level: "", status: "Free", estimatedDuration: "", prerequisites: "", price: "", enabled: true, image: null });
       setAddImage(null);
       setAddImagePreview(null);
     } catch (err) {
@@ -240,11 +243,19 @@ function Courses() {
     quizTitle: "",
     section: "",
     instructions: "",
+    timeLimit: 60,
     questions: [
-      // Example: { question: "", options: ["", "", "", ""], answer: "" }
+      // Example: { question: "", options: ["", "", "", ""], answer: "", marks: 1 }
     ],
   });
   const [quizFormError, setQuizFormError] = useState("");
+
+  // Calculate total marks for the quiz
+  const calculateTotalMarks = () => {
+    return quizForm.questions.reduce((total, question) => {
+      return total + (parseInt(question.marks) || 0);
+    }, 0);
+  };
 
   // Add marks to each question in quizForm
   const handleQuizInputChange = (e, idx, field, optIdx) => {
@@ -256,7 +267,7 @@ function Courses() {
         } else if (field === "answer") {
           questions[idx].answer = e.target.value;
         } else if (field === "marks") {
-          questions[idx].marks = e.target.value;
+          questions[idx].marks = parseInt(e.target.value) || 1;
         } else {
           questions[idx][field] = e.target.value;
         }
@@ -276,7 +287,7 @@ function Courses() {
       ...prev,
       questions: [
         ...prev.questions,
-        { question: "", options: ["", "", "", ""], answer: "" },
+        { question: "", options: ["", "", "", ""], answer: "", marks: 1 },
       ],
     }));
   };
@@ -293,50 +304,88 @@ function Courses() {
   const handleQuizFormSubmit = async (e) => {
     e.preventDefault();
     setQuizFormError("");
+    
     // Validate quiz
     if (!quizForm.quizTitle || !quizForm.section) {
       setQuizFormError("Quiz title and section are required.");
       return;
     }
-    if (
-      quizForm.questions.length === 0 ||
-      quizForm.questions.some(
-        (q) =>
-          !q.question ||
-          q.options.some((opt) => !opt) ||
-          !q.answer ||
-          !["1", "2", "3", "4"].includes(q.answer)
-      )
-    ) {
-      setQuizFormError(
-        "Each question must have text, 4 options, and a correct option (1, 2, 3, or 4)."
-      );
+    
+    if (quizForm.questions.length === 0) {
+      setQuizFormError("At least one question is required.");
       return;
     }
+    
+    // Validate each question
+    for (let i = 0; i < quizForm.questions.length; i++) {
+      const q = quizForm.questions[i];
+      if (!q.question.trim()) {
+        setQuizFormError(`Question ${i + 1} text is required.`);
+        return;
+      }
+      if (q.options.some(opt => !opt.trim())) {
+        setQuizFormError(`Question ${i + 1} must have all 4 options filled.`);
+        return;
+      }
+      if (!q.answer || !["1", "2", "3", "4"].includes(q.answer)) {
+        setQuizFormError(`Question ${i + 1} must have a valid answer (1, 2, 3, or 4).`);
+        return;
+      }
+      if (!q.marks || q.marks <= 0) {
+        setQuizFormError(`Question ${i + 1} must have valid marks (positive number).`);
+        return;
+      }
+    }
+    
     try {
-      // Send quiz to backend (implement backend as needed)
-      await axios.post(`${API_BASE_URL}/api/quizzes/add`, {
-        quizTitle: quizForm.quizTitle,
+      // Find the selected section object to get its course ID
+      const selectedSectionObj = sections.find(s => s._id === quizForm.section);
+      if (!selectedSectionObj) {
+        setQuizFormError("Selected section not found.");
+        return;
+      }
+
+      // Prepare quiz data
+      const quizData = {
+        title: quizForm.quizTitle,
+        course: currentCourse._id,
         section: quizForm.section,
         instructions: quizForm.instructions,
+        timeLimit: quizForm.timeLimit || 60,
         questions: quizForm.questions.map(q => ({
           question: q.question,
           options: q.options,
-          answer: q.answer // This will be "1", "2", "3", or "4"
-        })),
-      });
-      alert("Quiz added successfully!");
-      setQuizForm({
-        quizTitle: "",
-        section: "",
-        instructions: "",
-        questions: [],
-      });
-      setActiveSubForm("basic");
+          answer: q.answer,
+          marks: parseInt(q.marks) || 1
+        }))
+      };
+
+      console.log("Submitting quiz data:", quizData);
+
+      // Send quiz to backend
+      const response = await axios.post(`${API_BASE_URL}/api/quizzes/add`, quizData);
+      
+      if (response.status === 201) {
+        alert(`Quiz added successfully! Total marks: ${calculateTotalMarks()}`);
+        
+        // Reset form
+        setQuizForm({
+          quizTitle: "",
+          section: "",
+          instructions: "",
+          timeLimit: 60,
+          questions: [],
+        });
+        
+        // Refresh course data to show the new quiz
+        await fetchCourses();
+        
+        setActiveSubForm("basic");
+      }
     } catch (error) {
-      setQuizFormError(
-        error.response?.data?.message || error.message || "Failed to add quiz."
-      );
+      console.error("Quiz submission error:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to add quiz.";
+      setQuizFormError(errorMessage);
     }
   };
 
@@ -642,8 +691,28 @@ function Courses() {
             value={quizForm.instructions}
             onChange={handleQuizInputChange}
             placeholder="Enter quiz instructions"
-            required
           ></textarea>
+        </div>
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <label>Time Limit (minutes)</label>
+            <input
+              type="number"
+              className="form-control"
+              name="timeLimit"
+              value={quizForm.timeLimit}
+              onChange={handleQuizInputChange}
+              placeholder="Enter time limit in minutes"
+              min="1"
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <label>Total Marks</label>
+            <div className="form-control bg-light">
+              <strong>{calculateTotalMarks()} marks</strong>
+            </div>
+          </div>
         </div>
         <div>
           <h6>Questions</h6>
@@ -948,7 +1017,7 @@ function Courses() {
           .map((course) => (
             <div className="col-md-4 mb-4" key={course._id}>
               <div className="card course-card" onClick={() => handleCourseClick(course)}>
-                <img src={course.image || "https://via.placeholder.com/300x200"} className="card-img-top" alt={course.title} />
+                <img src={course.image || createCoursePlaceholder(300, 200)} className="card-img-top" alt={course.title} />
                 <div className="card-body">
                   <span className={`badge bg-primary mb-2`}>{course.category}</span>
                   <h5 className="card-title">{course.title}</h5>
@@ -998,10 +1067,8 @@ function Courses() {
 
   // Handle Course Click: Show sections for the selected course
   const handleCourseClick = (course) => {
-    setSelectedCourse(course);
-    setShowCourseDetails(true);
-    setSelectedSection(null);
-    setSelectedLesson(null);
+    // Navigate to the dedicated course details page
+    navigate(`/courses/${course._id}`);
   };
 
   // Handle Section Click: Show lessons for the selected section
@@ -1524,7 +1591,7 @@ function Courses() {
                     </li>
                     <li>
                       <span className={`badge ${course.status === "Paid" ? "bg-danger" : "bg-info"} me-2`}>
-                        {course.status === "Paid" ? `Paid - ₹${course.price}` : "Free"}
+                        {course.status === "Paid" ? `Paid - ₹${course.amount}` : "Free"}
                       </span>
                     </li>
                   </ul>
@@ -1591,6 +1658,16 @@ function Courses() {
                     )}
                     <label className="form-label">Estimated Duration</label>
                     <input className="form-control mb-2" name="estimatedDuration" value={addForm.estimatedDuration} onChange={e => setAddForm(f => ({ ...f, estimatedDuration: e.target.value }))} placeholder="e.g. 10 hours" />
+                    
+                    <div className="mb-3">
+                      <ImageUpload
+                        currentImage={addForm.image}
+                        onImageChange={(image) => setAddForm(f => ({ ...f, image }))}
+                        label="Course Image"
+                        className="mb-3"
+                      />
+                    </div>
+                    
                     <label className="form-label">Enabled</label>
                     <div className="form-check form-switch mb-2">
                       <input className="form-check-input" type="checkbox" checked={addForm.enabled} onChange={e => setAddForm(f => ({ ...f, enabled: e.target.checked }))} />

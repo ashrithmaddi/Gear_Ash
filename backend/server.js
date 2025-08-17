@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./db');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const lessonRoutes = require("./routes/lessonRoutes");
 const quizRoutes = require("./routes/quizRoutes");
@@ -10,7 +11,8 @@ const settingsRoutes = require('./routes/settingsRoutes')
 const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes"); // Import student routes
-const adminRoutes=require("./routes/adminRoutes") 
+const adminRoutes=require("./routes/adminRoutes");
+const uploadRoutes = require("./routes/uploadRoutes"); // Import upload routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +20,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cors());
+
+// Serve static files (uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect Database
 connectDB();
@@ -27,6 +32,7 @@ connectDB();
 app.use('/api/auth', authRoutes); // Use authRoutes for authentication-related routes
 app.use('/api/student', studentRoutes); // Student routes
 app.use('/api/admin',adminRoutes)
+app.use('/api/upload', uploadRoutes); // Upload routes for file handling
 app.use('/api/courses', require('./routes/courseRoutes'));
 app.use("/api/lessons", lessonRoutes);
 app.use("/api/quizzes", quizRoutes);

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import ImageUpload from "../ImageUpload";
+import config from "../../config/config";
 
 const Profile = () => {
   // Get user from localStorage
@@ -29,6 +31,10 @@ const Profile = () => {
     try {
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
       setUser(currentUser);
+      // Initialize profile picture from localStorage if available
+      if (currentUser?.profilePicture) {
+        setProfilePicture(currentUser.profilePicture);
+      }
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
     }
@@ -43,7 +49,7 @@ const Profile = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`/api/student/${user._id}/profile`, {
+        const response = await fetch(config.getFullApiUrl(`student/${user._id}/profile`), {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -57,6 +63,7 @@ const Profile = () => {
             lastName: data.lastName || "",
             email: data.email || "",
           });
+          setProfilePicture(data.profilePicture || null);
         } else {
           console.error("Failed to fetch profile:", response.status, response.statusText);
         }
@@ -93,19 +100,33 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/api/student/${user._id}`, {
+      const updateData = {
+        firstName: userData.firstName.trim(),
+        lastName: userData.lastName.trim(),
+      };
+      
+      // Include profile picture if it was changed
+      if (profilePicture) {
+        updateData.profilePicture = profilePicture;
+      }
+
+      const res = await fetch(config.getFullApiUrl(`auth/profile/${user._id}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({
-          firstName: userData.firstName.trim(),
-          lastName: userData.lastName.trim(),
-        }),
+        body: JSON.stringify(updateData),
       });
 
       if (res.ok) {
+        const updatedUser = await res.json();
+        // Update localStorage with new user data
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const newUserData = { ...currentUser, ...updatedUser.user };
+        localStorage.setItem("currentUser", JSON.stringify(newUserData));
+        setUser(newUserData);
+        
         alert("✅ Profile updated!");
       } else {
         const errorData = await res.json();
@@ -137,7 +158,7 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/api/student/${user._id}/update-password`, {
+      const res = await fetch(config.getFullApiUrl(`student/${user._id}/update-password`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

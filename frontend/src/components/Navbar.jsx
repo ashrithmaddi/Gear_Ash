@@ -1,6 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { userAdminContextObj } from "../context/UserAdmin";
 import { useNavigate } from "react-router-dom";
+import ProfilePicture from "./ProfilePicture";
 
 function Navbar() {
   const { currentUser, setCurrentUser } = useContext(userAdminContextObj);
@@ -36,9 +37,10 @@ function Navbar() {
         </div>
         <div className="nav-links">
           <div className="nav-profile" ref={dropdownRef} style={{ position: "relative" }}>
-            <img
-              src="frontend/src/assests/Profile-DWMY1YUr.png"
+            <ProfilePicture
+              src={currentUser.profilePicture}
               alt="Profile"
+              size="40"
               className="profile-img"
             />
             <span className="profile-name">{currentUser.firstName} {currentUser.lastName}</span>

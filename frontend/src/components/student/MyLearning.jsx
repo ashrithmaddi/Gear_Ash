@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
+import { createCoursePlaceholder } from "../../utils/placeholderUtils";
 
 const MyLearning = () => {
   const [courses, setCourses] = useState([]);
@@ -126,7 +127,7 @@ const MyLearning = () => {
                 style={{ transition: "all 0.3s ease" }}
               >
                 <img
-                  src={course.image || "https://via.placeholder.com/300x180?text=No+Image"}
+                  src={course.image || createCoursePlaceholder(300, 180)}
                   alt={course.title}
                   className="card-img-top"
                   style={{ 

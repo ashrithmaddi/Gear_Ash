@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:5000";
 
 function LessonDetails() {
   const { courseId, sectionId, lessonId } = useParams();
+  const navigate = useNavigate();
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +33,27 @@ function LessonDetails() {
 
   return (
     <div className="container my-4">
-      <h2>{lesson.title}</h2>
+      {/* Go Back Button */}
+      <div className="mb-3">
+        <button 
+          className="btn btn-outline-secondary"
+          onClick={() => navigate(`/courses/${courseId}/sections/${sectionId}`)}
+        >
+          <i className="bi bi-arrow-left me-2"></i>
+          Back to Section
+        </button>
+      </div>
+      
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>{lesson.title}</h2>
+        <button 
+          className="btn btn-primary"
+          onClick={() => navigate(`/courses/${courseId}/sections/${sectionId}/lessons/${lessonId}/edit`)}
+        >
+          <i className="bi bi-pencil me-1"></i>
+          Edit Lesson
+        </button>
+      </div>
       <p><strong>Type:</strong> {lesson.type}</p>
       <p><strong>Description:</strong> {lesson.description}</p>
       {lesson.type === "Text" && (

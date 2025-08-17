@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { createCoursePlaceholder } from "../../utils/placeholderUtils";
+import config from "../../config/config";
 
 const Scourses = () => {
   const [courses, setCourses] = useState([]);
@@ -23,8 +25,18 @@ const Scourses = () => {
   const fetchCourses = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/courses/every");
+      console.log("Fetching courses from courses/every...");
+      
+      const response = await fetch(config.getFullApiUrl("courses/every"));
+      console.log("Response status:", response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
+      console.log("Courses data received:", data);
+      
       setCourses(data);
       setFilteredCourses(data);
     } catch (error) {
@@ -341,7 +353,7 @@ const Scourses = () => {
                   <Link to={`/course-detail/${course._id}`} className="course-link">
                     <div className="course-image-container">
                       <img
-                        src={course.image || "https://via.placeholder.com/400x240?text=No+Image"}
+                        src={course.image || createCoursePlaceholder(300, 180)}
                         alt={course.title}
                         className="course-image"
                         loading="lazy"

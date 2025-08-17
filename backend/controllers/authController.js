@@ -78,9 +78,32 @@ const login = async (req, res) => {
   }
 };
 
+// Update user profile
+const updateProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { firstName, lastName, profilePicture } = req.body;
+    
+    const updateData = {};
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
+    if (profilePicture !== undefined) updateData.profilePicture = profilePicture;
+    
+    const user = await User.findByIdAndUpdate(userId, updateData, { new: true }).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.json({ message: "Profile updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+};
+
 module.exports = {
   register,
   lecturerRegister,
   login,
-  
+  updateProfile
 };

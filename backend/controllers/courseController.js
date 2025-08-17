@@ -15,7 +15,7 @@ const getCourses= async (req, res) => {
 
 const addCourse = async (req, res) => {
     try {
-        const { title, category, description, level, status ,estimatedDuration,price} = req.body;
+        const { title, category, description, level, status, estimatedDuration, price, image } = req.body;
         let sections = [];
         if (req.body.sections) {
             try {
@@ -31,8 +31,9 @@ const addCourse = async (req, res) => {
             description,
             level,
             status: status || "Free",
-            price:price,
-            duration:estimatedDuration,
+            amount: price, // Use 'amount' field as defined in model
+            duration: estimatedDuration,
+            image,
             sections,
         });
 
@@ -308,7 +309,7 @@ const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
-    res.status(200).json({ course });
+    res.status(200).json(course);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import config from "../config/config";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = config.apiBaseUrl;
 
 function CourseDetails() {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
+  const [quizCounts, setQuizCounts] = useState({});
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -21,7 +23,33 @@ function CourseDetails() {
       setLoading(true);
       try {
         const res = await axios.get(`${API_BASE_URL}/api/courses/${courseId}`);
-        setCourse(res.data.course || res.data);
+        const courseData = res.data.course || res.data;
+        setCourse(courseData);
+        
+        // Fetch quiz counts for each section
+        const counts = {};
+        if (courseData.sections && courseData.sections.length > 0) {
+          try {
+            const sectionIds = courseData.sections.map(section => section._id);
+            const countsRes = await axios.post(`${API_BASE_URL}/api/quizzes/counts`, { sectionIds });
+            Object.assign(counts, countsRes.data);
+          } catch (err) {
+            console.error("Error fetching quiz counts:", err);
+            // Fallback to individual requests if the batch endpoint fails
+            await Promise.all(
+              courseData.sections.map(async (section) => {
+                try {
+                  const quizRes = await axios.get(`${API_BASE_URL}/api/quizzes/section/${section._id}`);
+                  counts[section._id] = quizRes.data ? quizRes.data.length : 0;
+                } catch (err) {
+                  console.error(`Error fetching quizzes for section ${section._id}:`, err);
+                  counts[section._id] = 0;
+                }
+              })
+            );
+          }
+        }
+        setQuizCounts(counts);
         setError("");
       } catch (err) {
         setError("Failed to fetch course details.");
@@ -67,7 +95,32 @@ function CourseDetails() {
         },
       ];
       const res = await axios.put(`${API_BASE_URL}/api/courses/update/${courseId}`, { sections: updatedSections });
-      setCourse(res.data);
+      const updatedCourse = res.data;
+      setCourse(updatedCourse);
+      
+      // Refresh quiz counts for the new section structure
+      const counts = {};
+      if (updatedCourse.sections && updatedCourse.sections.length > 0) {
+        try {
+          const sectionIds = updatedCourse.sections.map(section => section._id);
+          const countsRes = await axios.post(`${API_BASE_URL}/api/quizzes/counts`, { sectionIds });
+          Object.assign(counts, countsRes.data);
+        } catch (err) {
+          // Fallback to individual requests
+          await Promise.all(
+            updatedCourse.sections.map(async (section) => {
+              try {
+                const quizRes = await axios.get(`${API_BASE_URL}/api/quizzes/section/${section._id}`);
+                counts[section._id] = quizRes.data ? quizRes.data.length : 0;
+              } catch (err) {
+                counts[section._id] = 0;
+              }
+            })
+          );
+        }
+      }
+      setQuizCounts(counts);
+      
       setShowAddSectionModal(false);
       setAddSectionForm({ title: "", description: "", enabled: true });
     } catch (err) {
@@ -83,15 +136,44 @@ function CourseDetails() {
 
   return (
     <div className="container my-4">
+      {/* Go Back Button */}
+      <div className="mb-3">
+        <button 
+          className="btn btn-outline-secondary"
+          onClick={() => navigate("/courses")}
+        >
+          <i className="bi bi-arrow-left me-2"></i>
+          Back to Courses
+        </button>
+      </div>
+      
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h2>{course.title}</h2>
-          <span className="badge bg-primary me-2">{course.category}</span>
-          <span className="badge bg-secondary me-2">{course.level}</span>
-          <span className={`badge ${course.enabled ? "bg-success" : "bg-warning"}`}>{course.enabled ? "Enabled" : "Disabled"}</span>
-          <span className={`badge ms-2 ${course.status === "Paid" ? "bg-danger" : "bg-info"}`}>
-            {course.status === "Paid" ? `Paid - ₹${course.price}` : "Free"}
-          </span>
+        <div className="d-flex align-items-center">
+          {course.image && (
+            <img 
+              src={course.image} 
+              alt={course.title}
+              className="me-3"
+              style={{ 
+                width: '80px', 
+                height: '80px', 
+                objectFit: 'cover', 
+                borderRadius: '8px',
+                border: '2px solid #dee2e6'
+              }}
+            />
+          )}
+          <div>
+            <h2>{course.title}</h2>
+            <div>
+              <span className="badge bg-primary me-2">{course.category}</span>
+              <span className="badge bg-secondary me-2">{course.level}</span>
+              <span className={`badge ${course.enabled ? "bg-success" : "bg-warning"}`}>{course.enabled ? "Enabled" : "Disabled"}</span>
+              <span className={`badge ms-2 ${course.status === "Paid" ? "bg-danger" : "bg-info"}`}>
+                {course.status === "Paid" ? `Paid - ₹${course.amount}` : "Free"}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="dropdown">
           <button className="btn btn-outline-secondary dropdown-toggle" onClick={() => setShowDropdown(!showDropdown)}>
@@ -99,7 +181,7 @@ function CourseDetails() {
           </button>
           {showDropdown && (
             <ul className="dropdown-menu show" style={{ position: "absolute", right: 0 }}>
-              <li><button className="dropdown-item" onClick={() => navigate(`/courses/edit/${course._id}`)}>Edit Course</button></li>
+              <li><button className="dropdown-item" onClick={() => navigate(`/courses/${course._id}/edit`)}>Edit Course</button></li>
               <li><button className="dropdown-item" onClick={handleToggleCourseEnabled}>{course.enabled ? "Disable" : "Enable"} Course</button></li>
               <li><button className="dropdown-item" onClick={() => setShowAddSectionModal(true)}>Add Section</button></li>
               <li><button className="dropdown-item text-danger" onClick={handleDeleteCourse}>Delete Course</button></li>
@@ -127,7 +209,7 @@ function CourseDetails() {
                 <div>
                   <strong>{section.title}</strong>
                   <span className="badge bg-primary ms-2">{section.lessons?.length || 0} Lessons</span>
-                  <span className="badge bg-secondary ms-2">{section.quizzes?.length || 0} Quizzes</span>
+                  <span className="badge bg-secondary ms-2">{quizCounts[section._id] || 0} Quizzes</span>
                   <span className={`badge ms-2 ${section.enabled ? "bg-success" : "bg-warning"}`}>{section.enabled ? "Enabled" : "Disabled"}</span>
                 </div>
                 <i className="fas fa-chevron-right"></i>

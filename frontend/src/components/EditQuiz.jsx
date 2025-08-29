@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { userAdminContextObj } from "../context/UserAdmin";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://gearash-production.up.railway.app";
 
 function EditQuiz() {
   const { courseId, sectionId, quizId } = useParams();

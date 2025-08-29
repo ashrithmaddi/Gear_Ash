@@ -25,7 +25,7 @@ function Faculty() {
   // Fetch lecturer list (for reuse)
   const fetchLecturerList = useCallback(async () => {
     try {
-      let res = await axios.get("http://localhost:5000/api/admin/getLecturerList");
+      let res = await axios.get("https://gearash-production.up.railway.app/api/admin/getLecturerList");
       setLecturerList(res.data.lecList);
     } catch (e) {
       console.log(e.message);
@@ -35,9 +35,9 @@ function Faculty() {
   // Fetch total and active lecturers
   const fetchCounts = useCallback(async () => {
     try {
-      let res1 = await axios.get("http://localhost:5000/api/admin/getTotalLecturers");
+      let res1 = await axios.get("https://gearash-production.up.railway.app/api/admin/getTotalLecturers");
       setLecturers(res1.data.lecturers);
-      let res2 = await axios.get("http://localhost:5000/api/admin/getActiveLecturers");
+      let res2 = await axios.get("https://gearash-production.up.railway.app/api/admin/getActiveLecturers");
       setActive(res2.data.active);
     } catch (e) {
       console.log(e.message);
@@ -70,7 +70,7 @@ function Faculty() {
       };
       if (!payload.password) payload.password = 'lecturer@123';
 
-      await axios.post('http://localhost:5000/api/auth/lecturerReg', payload);
+      await axios.post('https://gearash-production.up.railway.app/api/auth/lecturerReg', payload);
       setFormMsg('Lecturer registered successfully!');
       setForm({
         firstName: '',
@@ -91,7 +91,7 @@ function Faculty() {
   const handleToggleStatus = async (lecturerId, currentStatus) => {
     try {
       const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
-      await axios.put(`http://localhost:5000/api/admin/updateLecturerStatus/${lecturerId}`, { status: newStatus });
+      await axios.put(`https://gearash-production.up.railway.app/api/admin/updateLecturerStatus/${lecturerId}`, { status: newStatus });
       await fetchLecturerList();
       await fetchCounts();
     } catch (e) {

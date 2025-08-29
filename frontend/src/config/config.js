@@ -8,7 +8,7 @@ const config = {
   env: import.meta.env.VITE_NODE_ENV || import.meta.env.MODE || 'development',
   
   // API Configuration - directly from .env
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'https://gearash-production.up.railway.app',
   
   // Payment Configuration
   razorpayKeyId: import.meta.env.VITE_RAZORPAY_KEY_ID || '',

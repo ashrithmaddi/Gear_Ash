@@ -30,13 +30,13 @@ const StudentList = () => {
           attendanceRes,
           testResultsRes
         ] = await Promise.all([
-          axios.get('http://localhost:5000/api/admin/getTotalStudents'),
-          axios.get('http://localhost:5000/api/admin/getActiveStudents'),
-          axios.get('http://localhost:5000/api/admin/getNewStudentsThisMonth'),
-          axios.get('http://localhost:5000/api/admin/getPendingFees'),
-          axios.get('http://localhost:5000/api/admin/getStudentList'),
-          axios.get('http://localhost:5000/api/admin/getAttendanceData'),
-          axios.get('http://localhost:5000/api/admin/getTestResults')
+          axios.get('https://gearash-production.up.railway.app/api/admin/getTotalStudents'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getActiveStudents'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getNewStudentsThisMonth'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getPendingFees'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getStudentList'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getAttendanceData'),
+          axios.get('https://gearash-production.up.railway.app/api/admin/getTestResults')
         ]);
         setTotalStudents(totalRes.data.students || 0);
         setActiveStudents(activeRes.data.active || 0);
@@ -92,7 +92,7 @@ const StudentList = () => {
   const handleDeleteStudent = async (studentId) => {
   if (!window.confirm('Are you sure you want to delete this student?')) return;
   try {
-    await axios.delete(`http://localhost:5000/api/students/${studentId}`);   
+    await axios.delete(`https://gearash-production.up.railway.app/api/students/${studentId}`);   
      setStudents(prev => prev.filter(s => s._id !== studentId));
   } catch (err) {
     alert('Failed to delete student.');

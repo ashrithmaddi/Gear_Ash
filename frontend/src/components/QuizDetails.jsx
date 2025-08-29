@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://gearash-production.up.railway.app";
 
 function QuizDetails() {
   const { courseId, sectionId, quizId } = useParams();

@@ -4,7 +4,7 @@ import './Dashboard.css';
 import CanvasJSReact from '@canvasjs/react-charts';
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
+const apib=import.meta.env.VITE_API_BASE_URL;
 function Dashboard() {
 
   const [students,setStudents]=useState(0)
@@ -61,7 +61,7 @@ function Dashboard() {
     
     const fetchTotalStudents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/admin/getTotalStudents");
+        const res = await axios.get(`${apib}/api/admin/getTotalStudents`);
         setStudents(res.data.students);
       } catch (err) {
         console.log(err)
@@ -70,7 +70,7 @@ function Dashboard() {
 
     const fetchTotalLecturers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/admin/getTotalLecturers");
+        const res = await axios.get(`${apib}/api/admin/getTotalLecturers`);
         setLecturers(res.data.lecturers);
       } catch (err) {
         console.log(err)
@@ -80,7 +80,7 @@ function Dashboard() {
 
     const fetchTotalCourses = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/admin/getTotalCourses");
+        const res = await axios.get(`${apib}/api/admin/getTotalCourses`);
         setCourses(res.data.courses);
       } catch (err) {
         console.log(err)
@@ -89,7 +89,7 @@ function Dashboard() {
 
     // const fetchTotalRevenue = async () => {
     //   try {
-    //     const res = await axios.get("http://localhost:5000/api/admin/getTotalRevenue");
+    //     const res = await axios.get("${apib}/api/admin/getTotalRevenue");
     //     setStudents(res.data.students);
     //   } catch (err) {
     //     console.log(err)

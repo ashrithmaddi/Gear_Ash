@@ -92,7 +92,7 @@ const StudentList = () => {
   const handleDeleteStudent = async (studentId) => {
   if (!window.confirm('Are you sure you want to delete this student?')) return;
   try {
-    await axios.delete(`https://gearash-production.up.railway.app/api/students/${studentId}`);   
+    await axios.delete(`https://gearash-production.up.railway.app/api/student/${studentId}`);   
      setStudents(prev => prev.filter(s => s._id !== studentId));
   } catch (err) {
     alert('Failed to delete student.');

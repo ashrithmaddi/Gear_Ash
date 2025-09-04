@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { createCoursePlaceholder } from "../../utils/placeholderUtils";
+import config from "../../config/config";
 
 const MyLearning = () => {
   const [courses, setCourses] = useState([]);
@@ -17,7 +18,7 @@ const MyLearning = () => {
       return;
     }
     
-    fetch(`/api/student/${user._id}/my-courses`)
+    fetch(config.getFullApiUrl(`student/${user._id}/my-courses`))
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch enrolled courses");
         return res.json();
@@ -27,7 +28,7 @@ const MyLearning = () => {
         if (Array.isArray(data) && typeof data[0] === "string") {
           Promise.all(
             data.map(id =>
-              fetch(`/api/courses/${id}`).then(res => res.json())
+              fetch(config.getFullApiUrl(`courses/${id}`)).then(res => res.json())
             )
           ).then(fullCourses => {
             setCourses(fullCourses);

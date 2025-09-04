@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import config from "../../config/config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createCoursePlaceholder } from "../../utils/placeholderUtils";
 
@@ -24,7 +25,7 @@ const SearchPage = () => {
     setError("");
 
     try {
-      const response = await fetch(`/api/courses/search?query=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(config.getFullApiUrl(`courses/search?query=${encodeURIComponent(searchQuery)}`));
       const data = await response.json();
 
       if (data.success) {

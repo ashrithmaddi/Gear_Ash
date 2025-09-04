@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import config from "../../config/config";
 
 const ScourseProgress = () => {
   const { courseId } = useParams();
@@ -8,7 +9,7 @@ const ScourseProgress = () => {
   const [selectedLesson, setSelectedLesson] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/courses/${courseId}`)
+    fetch(config.getFullApiUrl(`courses/${courseId}`))
       .then(res => res.json())
       .then(data => setCourse(data));
   }, [courseId]);

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import config from "../../config/config";
 
 const BuyCourseButton = ({ courseId }) => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ const BuyCourseButton = ({ courseId }) => {
       return;
     }
     try {
-      const res = await fetch("/api/enrollments", {
+      const res = await fetch(config.getFullApiUrl("enrollments"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import config from "../../config/config";
 import { useNavigate } from "react-router-dom";
 import { userAdminContextObj } from "../../context/UserAdmin";
 import HeroImage from "../../assests/564.jpg";
@@ -15,7 +16,7 @@ const HeroSection = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/student/courses/enabled");
+        const response = await fetch(config.getFullApiUrl("student/courses/enabled"));
         const data = await response.json();
         setCourses(Array.isArray(data) ? data.slice(0, 5) : data.courses?.slice(0, 5) || []);
       } catch (error) {

@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 
-// ✅ Fixed CORS Configuration
+// ✅ Final CORS Configuration
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
@@ -31,6 +31,7 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
+    // Allow requests with no origin (like curl, Postman, mobile apps)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -42,7 +43,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // handle preflight
+app.options('*', cors(corsOptions)); // ✅ Preflight support
 
 // Serve static files (uploaded images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

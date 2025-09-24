@@ -1,56 +1,59 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+const express = require('express');
+const connectDB = require('./db');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
+const lessonRoutes = require("./routes/lessonRoutes");
+const quizRoutes = require("./routes/quizRoutes");
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const reportRoutes = require('./routes/reportRoutes');
+const settingsRoutes = require('./routes/settingsRoutes')
+const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
+const studentRoutes = require("./routes/studentRoutes"); // Import student routes
+const adminRoutes=require("./routes/adminRoutes");
+const uploadRoutes = require("./routes/uploadRoutes"); // Import upload routes
 
-dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Allowed frontend origins
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://gear-ash.vercel.app",
-  "https://www.gearup4.com"
-];
+// Middleware
+app.use(express.json());
 
-// CORS configuration
+// CORS Configuration
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:5173','https://gear-ash.vercel.app','https://www.gearup4.com'],
   credentials: true,
   optionsSuccessStatus: 200
 };
-
 app.use(cors(corsOptions));
-app.use(express.json()); // Parse JSON request body
 
-// ----------- Example Routes ----------- //
+// Serve static files (uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("Server is running ✅");
-});
+// Connect Database
+connectDB();
 
-// Auth route (sample)
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
 
-  // Dummy auth logic
-  if (email === "test@example.com" && password === "123456") {
-    return res.json({ success: true, message: "Login success" });
-  } else {
-    return res.status(401).json({ success: false, message: "Invalid credentials" });
-  }
-});
+// Routes
+app.use('/api/auth', authRoutes); // Use authRoutes for authentication-related routes
+app.use('/api/student', studentRoutes); // Student routes
+app.use('/api/admin',adminRoutes)
+app.use('/api/upload', uploadRoutes); // Upload routes for file handling
+app.use('/api/courses', require('./routes/courseRoutes'));
+app.use("/api/lessons", lessonRoutes);
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/payment", require("./routes/paymentRoutes"));
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingsRoutes);
 
-// -------------------------------------- //
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+// Start server
+app.listen(PORT, () => console.log(Server running on port ${PORT}));
+
+app.use((err,req,res,next)=>{
+    console.log("error Occured: ",err)
+    res.send({message:err.message})
+})

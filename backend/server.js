@@ -22,7 +22,7 @@ app.use(express.json());
 
 // CORS Configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:5173','https://gear-ash.vercel.app','https://www.gearup4.com'],
+  origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:5173','https://gear-ash.vercel.app'],
   credentials: true,
   optionsSuccessStatus: 200
 };

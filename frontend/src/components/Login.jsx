@@ -1,87 +1,117 @@
-import React, { useState,useContext} from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { userAdminContextObj } from "../context/UserAdmin";
 import { useNavigate } from "react-router-dom";
 import config from "../config/config";
+import "./Login.css";
 
-function Login({setShowLogin}) {
+function Login({ setShowLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [type, setType] = useState("student");
-  let {currentUser,setCurrentUser}=useContext(userAdminContextObj)
-  const navigate=useNavigate()
+  const [role, setRole] = useState("user");
+  const [isLoading, setIsLoading] = useState(false);
+  let { currentUser, setCurrentUser } = useContext(userAdminContextObj);
+  const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  try {
-    const res = await axios.post(config.getFullApiUrl("auth/login"), { email, password, role: type });
-    localStorage.setItem("currentUser", JSON.stringify(res.data));
-    setCurrentUser(res.data);
-    if (res.data.role === "admin") {
-      navigate("/dash");
-    } else {
-      navigate("/studash");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+    
+    try {
+      const res = await axios.post(config.getFullApiUrl("auth/login"), { 
+        email, 
+        password, 
+        role: role === "user" ? "user" : "admin" 
+      });
+      
+      localStorage.setItem("currentUser", JSON.stringify(res.data));
+      setCurrentUser(res.data);
+      
+      if (res.data.role === "admin") {
+        navigate("/dash");
+      } else {
+        navigate("/studash");
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    setError(err.response?.data?.error);
-  }
-};
+  };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100" style={{ background: "linear-gradient(to bottom, #1a237e, #0d47a1)" ,minHeight:"100vh"}}>
-      <div className="card p-4 shadow" style={{ minWidth: 350 }}>
-        <h2 className="mb-4 text-center" style={{ color: "#1a237e" }}>Login</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
+    <div className="login-container">
+      <div className="form-box login">
+        <h2 className="title animation" style={{ "--i": 17, "--j": 0 }}>
+          Login
+        </h2>
+
+        {error && <div className="error-message animation" style={{ "--i": 18, "--j": 0 }}>
+          {error}
+        </div>}
+
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label>Email</label>
-            <input
-              type="email"
-              className="form-control"
+          <div className="input-box animation" style={{ "--i": 18, "--j": 1 }}>
+            <input 
+              type="email" 
               value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoFocus
-              required
+              onChange={(e) => setEmail(e.target.value)}
+              required 
             />
+            <label htmlFor="">Email</label>
+            <i className="bx bxs-envelope"></i>
           </div>
-          <div className="mb-3">
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control"
+
+          <div className="input-box animation" style={{ "--i": 19, "--j": 2 }}>
+            <input 
+              type="password" 
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
+              onChange={(e) => setPassword(e.target.value)}
+              required 
             />
+            <label htmlFor="">Password</label>
+            <i className="bx bxs-lock-alt"></i>
           </div>
-          <div className="mb-3">
-            <label>Role</label>
-            <select
-              className="form-control"
-              value={type}
-              onChange={e => setType(e.target.value)}
+
+          <div className="input-box animation" style={{ "--i": 20, "--j": 3 }}>
+            <select 
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               required
+              className="role-select"
             >
               <option value="user">Student</option>
               <option value="admin">Admin</option>
             </select>
+            <label htmlFor="">Role</label>
+            <i className="bx bxs-user"></i>
           </div>
-          <button type="submit" className="btn btn-primary w-100">Login</button>
+
+          <button 
+            type="submit" 
+            className="btn animation" 
+            style={{ "--i": 21, "--j": 4 }}
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
         </form>
-        <div className="text-center mt-3">
-            <span style={{ color: "black" }}>New Student? </span>
+
+        <div className="login-link animation" style={{ "--i": 22, "--j": 5 }}>
+          <p>
+            New Student?{" "}
             <button
-              className="btn p-0"
-              style={{ color: "black", background: "none", border: "none", textDecoration: "underline" }}
+              type="button"
+              className="link-btn"
               onClick={() => setShowLogin(false)}
             >
               Register
             </button>
+          </p>
         </div>
       </div>
-      
     </div>
   );
 }

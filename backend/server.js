@@ -27,10 +27,13 @@ const corsOptions = {
         'http://localhost:3000',
         'http://localhost:5173',
         'https://gear-ash.vercel.app',
-        'https://www.gearup4.com'
+        'https://www.gearup4.com',
+        'https://gearup4.com'  // Add both www and non-www versions
     ],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with']
 };
 app.use(cors(corsOptions));
 

@@ -1,0 +1,40 @@
+.reports-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-revenue-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-revenue-section h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .admin-revenue-section .form-control {
+    max-width: 300px;
+  }
+  
+  .admin-revenue-section .btn {
+    font-size: 14px;
+  }
+  
+  .search-bar .form-control {
+    max-width: 300px;
+    margin-bottom: 10px;
+  }
+  
+  .data-table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }

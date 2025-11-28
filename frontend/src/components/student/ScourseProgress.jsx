@@ -100,47 +100,43 @@ if (lesson.videoUrl) {
     // Handle PDF and Document files (fileUrl from backend)
     if ((lesson.type === "PDF" || lesson.type === "Document" || lesson.pdfUrl || lesson.fileUrl) && (lesson.pdfUrl || lesson.fileUrl)) {
       const pdfUrl = lesson.fileUrl || lesson.pdfUrl;
-      const isGoogleDrive = pdfUrl.includes("drive.google.com");
+      
+      // Extract FILE_ID from Google Drive URL and convert to preview format
+      const getGoogleDrivePreviewUrl = (url) => {
+        if (url.includes("drive.google.com")) {
+          if (url.includes("/d/")) {
+            const fileId = url.split("/d/")[1].split("/")[0];
+            return `https://drive.google.com/file/d/${fileId}/preview`;
+          }
+        }
+        return null;
+      };
 
-      if (isGoogleDrive) {
+      const googleDrivePreviewUrl = getGoogleDrivePreviewUrl(pdfUrl);
+
+      if (googleDrivePreviewUrl) {
         return (
           <div className="position-relative">
             <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
               <div className="d-flex align-items-center">
                 <span className="badge bg-danger bg-opacity-90 rounded-pill px-3 py-2">
                   <i className="fas fa-file-pdf me-1"></i>
-                  PDF (Google Drive)
+                  PDF Document
                 </span>
               </div>
             </div>
             
-            <div className="rounded-4 overflow-hidden shadow-lg bg-light" style={{ 
-              height: '600px', 
-              display: 'flex', 
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              padding: '2rem'
+            <div className="rounded-4 overflow-hidden shadow-lg" style={{ 
+              height: '600px',
+              border: 'none'
             }}>
-              <div className="mb-4">
-                <div className="mb-3" style={{ fontSize: '3rem' }}>
-                  <i className="fas fa-cloud text-primary"></i>
-                </div>
-                <h5 className="text-dark mb-3">This file is hosted on Google Drive</h5>
-                <p className="text-muted mb-4">
-                  Click the button below to open and view the document on Google Drive.
-                </p>
-                <a 
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary btn-lg rounded-pill px-4"
-                >
-                  <i className="fas fa-external-link-alt me-2"></i>
-                  Open in Google Drive
-                </a>
-              </div>
+              <iframe 
+                src={googleDrivePreviewUrl}
+                width="100%" 
+                height="600px" 
+                allow="autoplay"
+                style={{ border: 'none' }}
+              ></iframe>
             </div>
           </div>
         );

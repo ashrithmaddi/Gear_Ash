@@ -97,23 +97,109 @@ if (lesson.videoUrl) {
   );
 }
 
-    if (lesson.pdfUrl) {
+    // Handle PDF and Document files (fileUrl from backend)
+    if ((lesson.type === "PDF" || lesson.type === "Document" || lesson.pdfUrl || lesson.fileUrl) && (lesson.pdfUrl || lesson.fileUrl)) {
+      const pdfUrl = lesson.fileUrl || lesson.pdfUrl;
+      const isGoogleDrive = pdfUrl.includes("drive.google.com");
+
+      if (isGoogleDrive) {
+        return (
+          <div className="position-relative">
+            <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div className="d-flex align-items-center">
+                <span className="badge bg-danger bg-opacity-90 rounded-pill px-3 py-2">
+                  <i className="fas fa-file-pdf me-1"></i>
+                  PDF (Google Drive)
+                </span>
+              </div>
+            </div>
+            
+            <div className="rounded-4 overflow-hidden shadow-lg bg-light" style={{ 
+              height: '600px', 
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: '2rem'
+            }}>
+              <div className="mb-4">
+                <div className="mb-3" style={{ fontSize: '3rem' }}>
+                  <i className="fas fa-cloud text-primary"></i>
+                </div>
+                <h5 className="text-dark mb-3">This file is hosted on Google Drive</h5>
+                <p className="text-muted mb-4">
+                  Click the button below to open and view the document on Google Drive.
+                </p>
+                <a 
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary btn-lg rounded-pill px-4"
+                >
+                  <i className="fas fa-external-link-alt me-2"></i>
+                  Open in Google Drive
+                </a>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // Regular PDF - show preview with download option
       return (
         <div className="position-relative">
-          <div className="rounded-4 overflow-hidden shadow-lg mb-3" style={{ height: '500px' }}>
+          <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div className="d-flex align-items-center">
+              <span className="badge bg-danger bg-opacity-90 rounded-pill px-3 py-2">
+                <i className="fas fa-file-pdf me-1"></i>
+                PDF Document
+              </span>
+            </div>
+            <div className="d-flex gap-2">
+              <a 
+                href={pdfUrl}
+                download={`${lesson.title}.pdf`}
+                className="btn btn-outline-primary btn-sm rounded-pill px-3"
+              >
+                <i className="fas fa-download me-2"></i>
+                Download
+              </a>
+              <a 
+                href={pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+              >
+                <i className="fas fa-external-link-alt me-2"></i>
+                Full Screen
+              </a>
+            </div>
+          </div>
+          
+          <div className="rounded-4 overflow-hidden shadow-lg bg-light" style={{ 
+            height: '600px', 
+            display: 'flex', 
+            flexDirection: 'column',
+            border: '1px solid #dee2e6'
+          }}>
             <iframe
-              src={lesson.pdfUrl}
+              src={`${pdfUrl}#toolbar=1&navpanes=0&scrollbar=1`}
               title={lesson.title}
               width="100%"
               height="100%"
               className="border-0"
+              style={{ minHeight: '600px' }}
             ></iframe>
           </div>
-          <div className="position-absolute top-0 end-0 m-3">
-            <span className="badge bg-danger bg-opacity-90 rounded-pill px-3 py-2">
-              <i className="fas fa-file-pdf me-1"></i>
-              PDF Document
-            </span>
+          
+          <div className="mt-3 alert alert-info d-flex align-items-center rounded-3" style={{ background: '#e3f2fd' }}>
+            <i className="fas fa-info-circle me-2 text-info" style={{ fontSize: '1.2rem' }}></i>
+            <div>
+              <small className="text-info-emphasis">
+                <strong>Tip:</strong> Use Download to save locally, or Full Screen for better viewing.
+              </small>
+            </div>
           </div>
         </div>
       );
